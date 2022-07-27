@@ -1,10 +1,15 @@
 <template>
-    <button class="cancel-edit-btn" @click="cancelEditHandler">
+    <button class="cancel-edit-btn"
+            ref="cancel-edit"
+            @click="cancelEditHandler">
       Отменить редактирование
     </button>
-    <router-link to="/" class="save-changes-btn btn">
+    <button class="save-changes-btn btn" ref="save-changes">
       Сохранить изменения
-    </router-link>
+      <router-link to="/" class="router-link">
+      </router-link>
+    </button>
+
 
   <div class="note-component-wrapper">
     <button title="Отменить последнее изменение"
@@ -51,7 +56,7 @@
           <span class="todo-list__span" :class="{['done-todo']: todo.checked}" @click="(e) => editHandler(e)" :id="todo.id">
             {{todo.content}}
           </span>
-          <div class="btn-group">
+          <div class="btn-group task-btns">
             <button aria-label="редактировать задачу"
                     class="edit-task-button task-button"
                     @click="(e) => editHandler(e)"
@@ -89,10 +94,14 @@
              :noteIndex="noteIndex"
              :taskId="editInputData.taskId"
   />
+
+  <button class="mobile-menu" @click="showMobileMenu">
+    <BIconArrowBarLeft class="mobile-menu__icon" />
+  </button>
 </template>
 
 <script>
-import {BIconPlusCircle, BIconPencilFill, BIconTrashFill, BIconSkipBackward} from "bootstrap-icons-vue";
+import {BIconPlusCircle, BIconPencilFill, BIconTrashFill, BIconSkipBackward, BIconArrowBarLeft} from "bootstrap-icons-vue";
 import ModalWindow from "@/components/ModalWindow.vue";
 import EditInput from "@/components/EditInput.vue";
 
@@ -104,6 +113,7 @@ export default {
     BIconPlusCircle,
     EditInput,
     BIconSkipBackward,
+    BIconArrowBarLeft,
   },
   data() {
     return {
@@ -114,9 +124,22 @@ export default {
       currentNote: [],
       noteIndex: 0,
       stateWasRevert: false,
+      menuToggler: true,
     }
   },
   methods: {
+    showMobileMenu() {
+      if (this.menuToggler) {
+        this.$refs["cancel-edit"].style.display = "block";
+        this.$refs["save-changes"].style.display = "block";
+      } else {
+        this.$refs["cancel-edit"].style.display = "";
+        this.$refs["save-changes"].style.display = "";
+      }
+
+      this.menuToggler = !this.menuToggler;
+    },
+
     cancelEditHandler() {
       this.showModal = true;
       this.cancelEditRequest = true;
@@ -216,6 +239,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .mobile-menu {
+    display: none;
+  }
   .note-component-wrapper {
     width: 80%;
     height: 100%;
@@ -346,11 +372,95 @@ export default {
     width: 300px;
     text-decoration: none;
     color: inherit;
-
+    animation: showBtns .3s ease-in-out 1 forwards;
+  }
+  
+  @keyframes showBtns {
+    from {
+      transform: translateY(300px);
+    }
+    to {
+      transform: translateY(0);
+    }
   }
 
   .save-changes-btn {
     left: auto;
     right: 40px;
+  }
+
+  .router-link {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+  }
+
+  @media (max-width: 768px) {
+    .note-component-wrapper {
+      width: 100%;
+    }
+
+    .note-flex-container {
+      border: none;
+    }
+
+    .todo-heading {
+      padding-top: 50px;
+    }
+
+    .cancel-edit-btn, .save-changes-btn {
+      display: none;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      bottom: 50%;
+      transform: translateY(50%);
+      right: 10px;
+      border: none;
+      display: block;
+    }
+
+    .mobile-menu__icon {
+      transform: scale(5);
+    }
+
+    .note-flex-container {
+      padding: 10px 0 20px;
+    }
+
+    .note-title {
+      flex-direction: column-reverse;
+    }
+
+    .task-btns {
+      flex-direction: column;
+    }
+
+    .edit-task-button {
+      display: none;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .todo-heading {
+      padding-top: 70px;
+    }
+
+    .cancel-edit-btn, .save-changes-btn {
+      right: 50%;
+      transform: translateX(-50%);
+    }
+
+    .save-changes-btn {
+      bottom: 5px;
+    }
+
+    .cancel-edit-btn {
+
+    }
   }
 </style>

@@ -76,9 +76,9 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
+    align-items: stretch;
     row-gap: 50px;
     column-gap: 20px;
-
   }
 
 </style>

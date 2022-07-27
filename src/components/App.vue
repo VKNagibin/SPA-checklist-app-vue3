@@ -32,6 +32,11 @@ export default {
 
 <style lang="scss">
 @import "../assets/fonts/FuturaPTMedium.css";
+  .App {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+  }
 
   * {
     margin: 0;
@@ -71,17 +76,15 @@ export default {
       }
   }
 
-  .App {
-    padding: 40px;
-    display: flex;
-    justify-content: center;
-  }
-
   li {
     list-style: none;
   }
 
   @media (max-width: 540px) {
+    html {
+      font-size: 14px;
+    }
+
     .App {
       padding: 0;
     }

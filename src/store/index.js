@@ -1,6 +1,21 @@
 import { createStore } from "vuex";
 import { nanoid } from "nanoid";
 
+function getArrayCopy(array) {
+    return JSON.parse(JSON.stringify(array));
+}
+
+function noteChangesHandler(state, noteIndex) {
+    if (state.wasRevert) {
+        state.savedNoteState = getArrayCopy( state.savedNoteState.slice(0, ++state.curStateIndex) );
+        state.savedNoteState.push( getArrayCopy(state.notesArray[noteIndex]) );
+        state.wasRevert = false;
+    } else {
+        state.savedNoteState.push( getArrayCopy(state.notesArray[noteIndex]) );
+        state.curStateIndex++;
+    }
+}
+
 const store = createStore({
     state () {
         return {
@@ -8,7 +23,8 @@ const store = createStore({
             notesArray: [],
             showEditInput: false,
             savedNoteState: [],
-            noteChanges: [],
+            curStateIndex: 0,
+            wasRevert: false,
         }
     },
     mutations: {
@@ -35,6 +51,9 @@ const store = createStore({
                     id: nanoid(),
                     checked: false,
                 });
+
+
+            noteChangesHandler(state, noteIndex)
         },
         editNote(state, {noteIndex, taskId, content}) {
             if (taskId) {
@@ -43,28 +62,47 @@ const store = createStore({
             } else {
                 state.notesArray[noteIndex].heading = content;
             }
+
+            noteChangesHandler(state, noteIndex)
         },
         doneTask(state,{noteIndex, taskId, isChecked}) {
             const taskIndex = state.notesArray[noteIndex].tasks.findIndex(item => item.id === taskId);
             state.notesArray[noteIndex].tasks[taskIndex].checked = isChecked;
+
+            noteChangesHandler(state, noteIndex)
         },
         deleteTask(state, {noteIndex, taskId}) {
             const taskIndex = state.notesArray[noteIndex].tasks.findIndex(item => item.id === taskId);
             state.notesArray[noteIndex].tasks.splice(taskIndex, 1);
+
+            noteChangesHandler(state, noteIndex)
         },
         saveNoteState(state, noteIndex) {
-            state.savedNoteState[0] = JSON.parse( JSON.stringify(state.notesArray[noteIndex]) );
+            const savedState = getArrayCopy(state.notesArray[noteIndex]);
+            state.savedNoteState.push(savedState);
         },
         cancelEditRequest(state, noteIndex) {
             state.notesArray[noteIndex] = state.savedNoteState[0];
         },
         removeNoteChanges(state, noteIndex) {
-            let changes = JSON.stringify(state.notesArray[noteIndex]);
-            state.notesArray[noteIndex] = JSON.parse( JSON.stringify(state.savedNoteState[0]) );
-            state.savedNoteState[1] = JSON.parse(changes);
+            if (state.curStateIndex > 0) {
+                state.notesArray[noteIndex] = getArrayCopy(state.savedNoteState[--state.curStateIndex]);
+            }
+            state.wasRevert = true;
         },
         repeatRemovedChanges(state, noteIndex) {
-            state.notesArray[noteIndex] = state.savedNoteState[1];
+            if (state.curStateIndex <= state.savedNoteState.length - 1) {
+                state.notesArray[noteIndex] = getArrayCopy(state.savedNoteState[++state.curStateIndex]);
+            }
+
+            (state.curStateIndex === state.savedNoteState.length - 1) &&
+            (state.wasRevert = false);
+        },
+        clearNoteState(state) {
+            state.savedNoteState = [];
+            state.curStateIndex = 0;
+            state.wasRevert = false;
+
         },
         getNotesArray(state, array) {
             state.notesArray = array;

@@ -39,7 +39,6 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 30px;
   }
 
   .add-note-btn {

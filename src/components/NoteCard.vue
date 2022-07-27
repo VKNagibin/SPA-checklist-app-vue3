@@ -88,8 +88,7 @@ export default {
 
   .note-flex-container {
     min-width: 400px;
-    min-height: 400px;
-    padding: 50px;
+    padding: 30px;
     display: flex;
     gap: 20px;
     flex-direction: column;
@@ -99,7 +98,7 @@ export default {
 
     .todo-heading {
       font-size: 4rem;
-      align-items: center;
+      text-align: center;
     }
   }
 
@@ -189,9 +188,6 @@ export default {
   }
 
   @media (max-width: 540px) {
-    html {
-      font-size: 8px;
-    }
 
     .note-component-wrapper {
       width: 95%;

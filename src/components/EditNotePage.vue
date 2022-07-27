@@ -1,20 +1,26 @@
 <template>
-  <div class="btn-group edit-note-btns">
     <button class="cancel-edit-btn" @click="cancelEditHandler">
       Отменить редактирование
-    </button>
-    <button class="remove-changes-btn" v-if="wasUpdate && !changesRemoved" @click="removeChangesHandler">
-      Отменить изменения
-    </button>
-    <button class="repeat-removed-changes-btn" v-else-if="wasUpdate && changesRemoved && !hide" @click="repeatRemovedChanges">
-      Повторить отмененное изменение
     </button>
     <router-link to="/" class="save-changes-btn btn">
       Сохранить изменения
     </router-link>
-  </div>
 
   <div class="note-component-wrapper">
+    <button title="Отменить последнее изменение"
+            v-if="this.$store.state.savedNoteState.length > 1 && this.$store.state.curStateIndex"
+            class="prev-state-btn"
+            aria-label="Отменить последнее изменение"
+            @click="removeChangesHandler">
+      <BIconSkipBackward class="prev-state-btn__icon"/>
+    </button>
+    <button v-if="stateWasRevert"
+            title="Вернуть отмененное изменение"
+            class="next-state-btn"
+            aria-label="Вернуть отмененное изменение"
+            @click="repeatRemovedChanges">
+      <BIconSkipBackward class="next-state-btn__icon"/>
+    </button>
     <div class="note-flex-container">
       <div class="note-title">
         <button aria-label="создать новую задачу"
@@ -86,7 +92,7 @@
 </template>
 
 <script>
-import {BIconPlusCircle, BIconPencilFill, BIconTrashFill} from "bootstrap-icons-vue";
+import {BIconPlusCircle, BIconPencilFill, BIconTrashFill, BIconSkipBackward} from "bootstrap-icons-vue";
 import ModalWindow from "@/components/ModalWindow.vue";
 import EditInput from "@/components/EditInput.vue";
 
@@ -97,6 +103,7 @@ export default {
     BIconTrashFill,
     BIconPlusCircle,
     EditInput,
+    BIconSkipBackward,
   },
   data() {
     return {
@@ -104,22 +111,15 @@ export default {
       showModal: false,
       deleteRequest: false,
       cancelEditRequest: false,
-      wasUpdate: false,
-      changesRemoved: false,
       currentNote: [],
       noteIndex: 0,
-      hide: false,
+      stateWasRevert: false,
     }
   },
   methods: {
     cancelEditHandler() {
       this.showModal = true;
       this.cancelEditRequest = true;
-    },
-
-    repeatRemovedChanges() {
-      this.$store.commit("repeatRemovedChanges", this.noteIndex);
-      this.hide = true;
     },
 
     deleteNoteBtn() {
@@ -166,8 +166,13 @@ export default {
 
     removeChangesHandler() {
       this.$store.commit("removeNoteChanges", this.noteIndex);
-      this.changesRemoved = true;
+        this.stateWasRevert = true;
     },
+
+    repeatRemovedChanges() {
+      this.$store.commit("repeatRemovedChanges", this.noteIndex);
+    },
+
 
     editHandler(e) {
       let element = this.findRequiredElem(e.currentTarget);
@@ -202,9 +207,11 @@ export default {
   },
   updated() {
     localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
-    (JSON.stringify(this.currentNote) === JSON.stringify(this.$store.state.savedNoteState)) ? null :
-      this.wasUpdate = true;
+    (this.$store.state.wasRevert) || (this.stateWasRevert = false);
   },
+  unmounted() {
+    this.$store.commit("clearNoteState");
+  }
 }
 </script>
 
@@ -214,6 +221,26 @@ export default {
     height: 100%;
     display: flex;
     align-items: center;
+  }
+
+  .prev-state-btn, .next-state-btn {
+    position: absolute;
+    top: 20px;
+    left: 40px;
+  }
+
+  .next-state-btn {
+    left: auto;
+    right: 40px;
+  }
+
+  .next-state-btn__icon, .prev-state-btn__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .next-state-btn__icon {
+    transform: rotate(180deg);
   }
 
   .note-title {
@@ -303,13 +330,12 @@ export default {
     gap: 40px;
   }
 
-  .save-changes-btn {
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .save-changes-btn, .cancel-edit-btn, .remove-changes-btn, .repeat-removed-changes-btn {
-    box-sizing: content-box;
+  .save-changes-btn, .cancel-edit-btn{
+    position: fixed;
+    box-sizing: border-box;
+    z-index: 100;
+    bottom: 40px;
+    left: 40px;
     text-align: center;
     font-size: 2rem;
     background: white;
@@ -317,11 +343,14 @@ export default {
     justify-content: center;
     align-items: center;
     border-radius: 20px;
-    padding: 10px 40px;
-    width: 200px;
+    width: 300px;
+    text-decoration: none;
+    color: inherit;
+
   }
 
-  .remove-changes-btn, .repeat-removed-changes-btn {
-    margin-right: auto;
+  .save-changes-btn {
+    left: auto;
+    right: 40px;
   }
 </style>

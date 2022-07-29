@@ -1,18 +1,16 @@
-import NoteList from "@/components/MainPage.vue";
-import SingleNote from "@/components/EditNotePage.vue";
+import MainPageView from "@/views/MainPageView.vue";
+import EditNoteView from "@/views/EditNoteView.vue";
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
-    { path: '/', component: NoteList },
-    { path: '/note', component: NoteList },
-    { path: '/note/:noteId', component: SingleNote },
+    { path: '/', component: MainPageView },
+    { path: '/note/:noteId', component: EditNoteView },
     { path: '/:pathMatch(.*)*', redirect: '/' },
 ];
 
 const router = createRouter({
     routes,
     history: createWebHistory(),
-
 });
 
 export default router;

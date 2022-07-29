@@ -1,13 +1,12 @@
 <template>
   <div class="App" @keydown.esc.capture="closeModals">
-    <router-view />
+    <router-view>
+    </router-view>
     <ModalWindow v-if="this.$store.state.modalIsOpen"/>
   </div>
-
 </template>
-
 <script>
-import ModalWindow from "./ModalWindow.vue";
+import ModalWindow from "./components/ModalWindow.vue";
 
 export default {
   components: {
@@ -31,9 +30,18 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../assets/fonts/FuturaPTMedium.css";
+@import "assets/fonts/FuturaPTMedium.css";
+  .appear-enter-active, .appear-leave-active {
+    transition: opacity .3s ease-in;
+
+  }
+
+  .appear-enter-from, .appear-leave-to {
+    opacity: 0;
+  }
+
   .App {
-    padding: 10px;
+    padding: 40px;
     display: flex;
     justify-content: center;
   }

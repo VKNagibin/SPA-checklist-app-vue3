@@ -44,6 +44,7 @@ const store = createStore({
         },
         deleteNote(state, noteIndex) {
             state.notesArray.splice(noteIndex, 1);
+            localStorage.setItem("notesArray", state.notesArray);
         },
         createNewTask(state, noteIndex) {
                 state.notesArray[noteIndex].tasks.push({
@@ -75,7 +76,8 @@ const store = createStore({
             const taskIndex = state.notesArray[noteIndex].tasks.findIndex(item => item.id === taskId);
             state.notesArray[noteIndex].tasks.splice(taskIndex, 1);
 
-            noteChangesHandler(state, noteIndex)
+            noteChangesHandler(state, noteIndex);
+            localStorage.setItem("notesArray", state.notesArray);
         },
         saveNoteState(state, noteIndex) {
             const savedState = getArrayCopy(state.notesArray[noteIndex]);

@@ -3,14 +3,14 @@
     <button class="add-note-btn" @click="addNoteHandler" aria-label="создать новую заметку">
       <BIconClipboard2Plus class='add-note-icon' />
     </button>
-    <div class="notes-area">
+    <transition-group tag="div" name="list" class="notes-area">
       <Note v-for="note in this.$store.state.notesArray" :id="note.noteId" :key="note.noteId" :tasks="note.tasks" :heading="note.heading"/>
-    </div>
+    </transition-group>
   </div>
 </template>
 
 <script>
-import Note from "./NoteCard.vue";
+import Note from "../components/NoteCard.vue";
 import { BIconClipboard2Plus } from 'bootstrap-icons-vue';
 
 export default {
@@ -18,23 +18,35 @@ export default {
     BIconClipboard2Plus,
     Note,
   },
-  data() {
-    return {
-
-    }
-  },
   methods: {
     addNoteHandler() {
       this.$store.commit("addNewNote");
     }
   },
-  updated() {
+  beforeUpdate() {
     localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
   }
 }
 </script>
 
 <style lang="scss" scoped>
+  .list-move {
+    transition: transform .5s ease-in-out;
+  }
+  .list-enter-from,
+  .list-leave-to {
+    opacity: 0;
+    transform: translateY(-100px);
+  }
+
+  .list-enter-active{
+    transition: all .5s ease-out;
+  }
+
+  .list-leave-active {
+    transition: all .3s ease-in;
+  }
+
   .component-wrapper {
     display: flex;
     flex-direction: column;
@@ -46,28 +58,15 @@ export default {
     border: none;
     width: max-content;
     height: max-content;
-    animation: pulse 1s linear 1s 1;
-  }
-
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.2);
-    }
-    100% {
-      transform: scale(1);
-    }
   }
 
   .add-note-icon {
     cursor: pointer;
-    transition: .2s;
+    transition: .5s;
     transform: scale(10);
 
     &:hover {
-      transform: scale(12);
+      transform: scale(11);
     }
   }
 

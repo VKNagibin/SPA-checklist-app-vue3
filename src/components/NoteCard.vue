@@ -1,4 +1,5 @@
 <template>
+  <div class="wrapper">
   <div class="note-component-wrapper">
     <div class="note-flex-container">
       <h2 class="todo-heading">{{heading}}</h2>
@@ -11,33 +12,29 @@
     </div>
 
     <div class="note-buttons-group">
-      <router-link :to="to"
-                   class="edit-note-button note-button"
-                   aria-label="редактировать заметку">
-        <BIconPencilFill style="transform: scale(4)"/>
-      </router-link>
-
-      <button aria-label="удалить заметку"
-              @click="deleteNoteBtn"
-              class="delete-note-button note-button">
-        <BIconTrashFill style="transform: scale(5)"/>
-      </button>
+      <EditNoteButton @editNote="editNote"/>
+      <RemoveNoteButton @deleteNote="deleteNote"/>
     </div>
   </div>
-  <modal-window v-if="showModal" @usersClick="(answer) => handleModalAnswer(answer)">
-    Вы точно хотите удалить заметку?
-  </modal-window>
+
+  <teleport to="body">
+    <modal-window v-if="showModal" @usersClick="(answer) => handleModalAnswer(answer)">
+      Вы точно хотите удалить заметку?
+    </modal-window>
+  </teleport>
+  </div>
 </template>
 
 <script>
-import { BIconPencilFill, BIconTrashFill } from 'bootstrap-icons-vue';
 import ModalWindow from "@/components/ModalWindow.vue";
+import RemoveNoteButton from "@/components/RemoveNoteButton";
+import EditNoteButton from "@/components/EditNoteButton";
 
 export default {
   components: {
+    EditNoteButton,
+    RemoveNoteButton,
     ModalWindow,
-    BIconPencilFill,
-    BIconTrashFill,
   },
 
   props: {
@@ -55,6 +52,11 @@ export default {
   },
 
   methods: {
+    editNote() {
+      this.to = `/note/${this.id}`
+      this.$router.push(this.to);
+    },
+
     handleModalAnswer(answer) {
       if (this.deleteRequest && answer) {
         let noteIndex = this.$store.state.notesArray.findIndex(item => item.noteId === this.id);
@@ -63,14 +65,16 @@ export default {
       this.showModal = false;
     },
 
-    deleteNoteBtn() {
+    deleteNote() {
       this.showModal = true;
       this.deleteRequest = true;
     }
   },
-  beforeUpdate() {
-    this.to = `/note/${this.id}`
+
+  mounted() {
+    localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
   },
+
   updated() {
     localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
   }

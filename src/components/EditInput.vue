@@ -1,31 +1,34 @@
 <template>
-  <div class="disable-all"
-       v-if="this.$store.state.showEditInput"
-        @keydown.esc="closeModal">
-    <div class="edit-wrapper"
-         :style="{top: `${top}px`, left: `${left}px`}">
-      <input class="edit-task-input"
-             :value="value"
-             ref="input"
-             @keydown.enter="saveEditHandler"
-             @keydown.esc="cancelEditHandler"
-             @input="(e) => handleInput(e)"
-             :style="{ 'min-width': `${width}px`, height: `${height}px`}"
-      />
-      <div class="btn-group">
-        <button class="save-edit-btn"
-                aria-label="сохранить изменения"
-                @click="saveEditHandler">
-          Сохранить
-        </button>
-        <button class="cancel-edit-btn"
-                aria-label="отменить редактирование"
-                @click="cancelEditHandler">
-          Отмена
-        </button>
-      </div>
+  <transition name="edit">
+    <div class="disable-all"
+         v-show="this.$store.state.showEditInput"
+          @keydown.esc="closeModal">
+        <div class="edit-wrapper"
+             :style="{top: `${top}px`, left: `${left}px`}">
+          <input class="edit-task-input"
+                 :value="value"
+                 ref="input"
+                 @keydown.enter="saveEditHandler"
+                 @keydown.esc="cancelEditHandler"
+                 @input="(e) => handleInput(e)"
+                 :style="{ 'min-width': `${width}px`, height: `${height}px`}"
+          />
+          <div class="btn-group">
+            <button class="save-edit-btn"
+                    aria-label="сохранить изменения"
+                    @click="saveEditHandler">
+              Сохранить
+            </button>
+            <button class="cancel-edit-btn"
+                    aria-label="отменить редактирование"
+                    @click="cancelEditHandler">
+              Отмена
+            </button>
+          </div>
+        </div>
     </div>
-  </div>
+  </transition>
+
 </template>
 
 <script>
@@ -79,6 +82,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .edit-enter-active, .edit-leave-active {
+    transition: opacity .4s ease-in-out;
+  }
+
+  .edit-enter-from, .edit-leave-to {
+    opacity: 0;
+  }
   .edit-wrapper {
     position: absolute;
     display: flex;
@@ -100,7 +110,7 @@ export default {
 
   .disable-all {
     display: flex;
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
     bottom: 0;

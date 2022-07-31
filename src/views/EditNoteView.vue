@@ -240,9 +240,11 @@ export default {
       padding-top: 70px;
     }
 
-    .cancel-edit-btn, .save-changes-btn {
-      right: 50%;
-      transform: translateX(-50%);
+    .cancel-edit-btn {
+      bottom: 0;
+    }
+    .save-changes-btn {
+      bottom: 50px;
     }
   }
 </style>

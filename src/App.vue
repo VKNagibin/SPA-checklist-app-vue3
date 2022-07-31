@@ -94,10 +94,6 @@ export default {
     html {
       font-size: 14px;
     }
-
-    .App {
-      padding: 0;
-    }
   }
 
 </style>

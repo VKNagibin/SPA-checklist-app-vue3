@@ -27,8 +27,8 @@
 
 <script>
 import ModalWindow from "@/components/ModalWindow.vue";
-import RemoveNoteButton from "@/components/RemoveNoteButton";
-import EditNoteButton from "@/components/EditNoteButton";
+import RemoveNoteButton from "@/components/Buttons/RemoveNoteButton";
+import EditNoteButton from "@/components/Buttons/EditNoteButton";
 
 export default {
   components: {
@@ -75,7 +75,7 @@ export default {
     localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
   },
 
-  updated() {
+  beforeUpdate() {
     localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
   }
 }

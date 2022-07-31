@@ -36,13 +36,13 @@
 
 <script>
 import NoteTitle from "@/components/NoteTitle";
-import CancelButton from "@/components/CancelButton";
-import ForwardButton from "@/components/ForwardButton";
-import BackwardButton from "@/components/BackwardButton";
-import RemoveNoteButton from "@/components/RemoveNoteButton";
+import CancelButton from "@/components/Buttons/CancelButton";
+import ForwardButton from "@/components/Buttons/ForwardButton";
+import BackwardButton from "@/components/Buttons/BackwardButton";
+import RemoveNoteButton from "@/components/Buttons/RemoveNoteButton";
 import ModalWindow from "@/components/ModalWindow.vue";
 import EditInput from "@/components/EditInput.vue";
-import SaveButton from "@/components/SaveButton";
+import SaveButton from "@/components/Buttons/SaveButton";
 import SingleTodo from "@/components/SingleTodo";
 
 export default {
@@ -112,12 +112,12 @@ export default {
       this.$store.commit("repeatRemovedChanges", this.noteIndex);
     },
   },
-  mounted() {
+  beforeMount() {
     this.currentNote = this.$store.state.notesArray.find(item => this.$route.params.noteId === item.noteId);
     this.noteIndex = this.$store.state.notesArray.findIndex(item => this.currentNote === item);
     this.$store.commit("saveNoteState", this.noteIndex);
   },
-  updated() {
+  beforeUpdate() {
     localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
   },
   unmounted() {
@@ -138,18 +138,8 @@ export default {
     transition: all .3s ease-in-out;
   }
 
-  .animation-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
-  .mobile-menu {
-    display: none;
-  }
   .note-component-wrapper {
     width: 80%;
-    height: 100%;
     display: flex;
     align-items: center;
   }
@@ -232,23 +222,6 @@ export default {
       padding-top: 50px;
     }
 
-    .cancel-edit-btn, .save-changes-btn {
-      display: none;
-    }
-
-    .mobile-menu {
-      position: fixed;
-      bottom: 50%;
-      transform: translateY(50%);
-      right: 10px;
-      border: none;
-      display: block;
-    }
-
-    .mobile-menu__icon {
-      transform: scale(5);
-    }
-
     .note-flex-container {
       padding: 10px 0 20px;
     }
@@ -270,14 +243,6 @@ export default {
     .cancel-edit-btn, .save-changes-btn {
       right: 50%;
       transform: translateX(-50%);
-    }
-
-    .save-changes-btn {
-      bottom: 5px;
-    }
-
-    .cancel-edit-btn {
-
     }
   }
 </style>

@@ -4,19 +4,19 @@
       <BIconClipboard2Plus class='add-note-icon' />
     </button>
     <transition-group tag="div" name="list" class="notes-area">
-      <Note v-for="note in this.$store.state.notesArray" :id="note.noteId" :key="note.noteId" :tasks="note.tasks" :heading="note.heading"/>
+      <NoteCard v-for="note in this.$store.state.notesArray" :id="note.noteId" :key="note.noteId" :tasks="note.tasks" :heading="note.heading"/>
     </transition-group>
   </div>
 </template>
 
 <script>
-import Note from "../components/NoteCard.vue";
+import NoteCard from "../components/NoteCard.vue";
 import { BIconClipboard2Plus } from 'bootstrap-icons-vue';
 
 export default {
   components: {
     BIconClipboard2Plus,
-    Note,
+    NoteCard,
   },
   methods: {
     addNoteHandler() {

@@ -9,10 +9,6 @@
 export default {
   emits: ["save"],
 
-  props: {
-
-  },
-
   methods: {
     save() {
       this.$emit("save");
@@ -25,7 +21,7 @@ export default {
   button {
     position: fixed;
     box-sizing: border-box;
-    z-index: 100;
+    z-index: 10;
     bottom: 40px;
     right: 40px;
     text-align: center;

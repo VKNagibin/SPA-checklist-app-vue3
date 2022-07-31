@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import EditButton from "@/components/EditButton";
-import RemoveTaskButton from "@/components/RemoveTaskButton";
+import EditButton from "@/components/Buttons/EditButton";
+import RemoveTaskButton from "@/components/Buttons/RemoveTaskButton";
 
 export default {
   components: {
@@ -60,7 +60,7 @@ export default {
       const editInputData = {
         ...this.editInputData,
         coordX: element.offsetLeft,
-        coordY: element.offsetTop - pageYOffset,
+        coordY: element.offsetTop,
         width: element.offsetWidth,
         height: element.offsetHeight,
         value: element.textContent,
@@ -70,7 +70,7 @@ export default {
       this.$emit("edit", editInputData);
     },
   },
-  updated() {
+  beforeUpdate() {
     localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
   },
 }

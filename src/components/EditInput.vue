@@ -2,7 +2,8 @@
   <transition name="edit">
     <div class="disable-all"
          v-show="this.$store.state.showEditInput"
-          @keydown.esc="closeModal">
+          @keydown.esc="closeModal"
+          @mousedown="(e) => handleClick(e)">
         <div class="edit-wrapper"
              :style="{top: `${top}px`, left: `${left}px`}">
           <input class="edit-task-input"
@@ -51,6 +52,11 @@ export default {
     handleInput(e) {
       this.inputValue = e.currentTarget.value;
     },
+    handleClick(e) {
+      if (e.target.classList.contains("disable-all")) {
+        this.$store.commit("showEditInput", false);
+      }
+    },
     closeModal() {
       this.$store.commit("showEditInput", false);
     },
@@ -73,9 +79,7 @@ export default {
     }
   },
   updated() {
-    if (this.$store.state.showEditInput) {
-      this.$refs.input.focus();
-    }
+    this.$refs.input.focus();
     localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
   },
 }
@@ -105,16 +109,17 @@ export default {
     background: white;
     font-size: 1.5rem;
     padding: 10px;
-    z-index: 20;
+    z-index: 110;
   }
 
   .disable-all {
     display: flex;
-    position: fixed;
+    position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
+    height: inherit;
     z-index: 105;
     background: rgba(255, 255, 255, 0.8);
   }

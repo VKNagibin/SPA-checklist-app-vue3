@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import EditButton from "@/components/EditButton";
-import CreateTaskButton from "@/components/CreateTaskButton";
+import EditButton from "@/components/Buttons/EditButton";
+import CreateTaskButton from "@/components/Buttons/CreateTaskButton";
 
 export default {
   components: {
@@ -35,7 +35,7 @@ export default {
       const editInputData = {
         ...this.editInputData,
         coordX: element.offsetLeft,
-        coordY: element.offsetTop - pageYOffset,
+        coordY: element.offsetTop,
         width: element.offsetWidth,
         height: element.offsetHeight,
         value: element.textContent,
@@ -46,7 +46,7 @@ export default {
     },
   },
 
-  updated() {
+  beforeUpdate() {
     localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
   },
 

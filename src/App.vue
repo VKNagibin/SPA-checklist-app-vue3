@@ -41,6 +41,8 @@ export default {
   }
 
   .App {
+    position: relative;
+    min-height: 100vh;
     padding: 40px;
     display: flex;
     justify-content: center;

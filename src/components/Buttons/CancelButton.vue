@@ -22,7 +22,7 @@ export default {
   button {
     position: fixed;
     box-sizing: border-box;
-    z-index: 100;
+    z-index: 10;
     bottom: 40px;
     left: 40px;
     text-align: center;

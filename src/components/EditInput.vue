@@ -42,9 +42,11 @@ export default {
     height: Number,
     noteIndex: Number,
     taskId: String,
+    show: Number,
   },
   data() {
     return {
+      showInput: this.$store.state.showEditInput,
       inputValue: "",
     }
   },
@@ -78,8 +80,14 @@ export default {
       this.$store.commit("showEditInput", false);
     }
   },
+
+  watch: {
+    show() {
+        this.$refs.input.focus();
+    }
+  },
+
   updated() {
-    this.$refs.input.focus();
     localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
   },
 }

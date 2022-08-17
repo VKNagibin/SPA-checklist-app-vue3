@@ -29,7 +29,8 @@
              :width="editInputData.width"
              :height="editInputData.height"
              :noteIndex="noteIndex"
-             :taskId="editInputData.taskId"/>
+             :taskId="editInputData.taskId"
+             :show="showInputCount"/>
   <CancelButton @cancel="cancelEditHandler"/>
   <SaveButton @save="saveChanges" ref="save-changes"/>
 </template>
@@ -65,12 +66,13 @@ export default {
       cancelEditRequest: false,
       currentNote: [],
       noteIndex: 0,
-      show: true,
+      showInputCount: 0,
     }
   },
   methods: {
     getInputData(inputData) {
       this.editInputData = inputData;
+      this.showInputCount++;
       this.$store.commit("showEditInput", true);
     },
 
@@ -112,6 +114,7 @@ export default {
       this.$store.commit("repeatRemovedChanges", this.noteIndex);
     },
   },
+
   beforeMount() {
     this.currentNote = this.$store.state.notesArray.find(item => this.$route.params.noteId === item.noteId);
     this.noteIndex = this.$store.state.notesArray.findIndex(item => this.currentNote === item);
@@ -120,9 +123,6 @@ export default {
   beforeUpdate() {
     localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
   },
-  unmounted() {
-    this.$store.commit("clearNoteState");
-  }
 }
 </script>
 

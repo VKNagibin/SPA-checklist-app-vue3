@@ -30,7 +30,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import "assets/fonts/FuturaPTMedium.css";
   .appear-enter-active, .appear-leave-active {
     transition: opacity .3s ease-in;
 
@@ -53,7 +52,7 @@ export default {
     padding: 0;
     box-sizing: border-box;
     background: transparent;
-    font-family: 'FuturaPTWebMedium', sans-serif;
+    font-family: sans-serif;
   }
 
   button, .btn {

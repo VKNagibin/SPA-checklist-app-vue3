@@ -2,8 +2,8 @@
   <button role="button"
           :aria-label="ariaLabel"
           class="edit-task-button task-button"
-          @click="(e) => editHandler(e)"
-          @keydown.enter="(e) => editHandler(e)">
+          @click="editHandler"
+          @keydown.enter="editHandler">
     <BIconPencilFill style="transform: scale(1.5)"/>
   </button>
 </template>
@@ -23,8 +23,8 @@ export default {
   emits: [ "edited" ],
 
   methods: {
-    editHandler(e) {
-      this.$emit("edited", e);
+    editHandler() {
+      this.$emit("edited");
     }
   }
 

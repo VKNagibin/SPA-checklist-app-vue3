@@ -2,17 +2,11 @@
   <div class="App" @keydown.esc.capture="closeModals">
     <router-view>
     </router-view>
-    <ModalWindow v-if="this.$store.state.modalIsOpen"/>
   </div>
 </template>
 <script>
-import ModalWindow from "./components/ModalWindow.vue";
 
 export default {
-  components: {
-    ModalWindow,
-  },
-
   methods: {
     closeModals() {
       this.$store.commit("showEditInput", false);

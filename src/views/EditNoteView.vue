@@ -19,7 +19,7 @@
     <RemoveNoteButton @delete-note="deleteNote"/>
   </div>
   <teleport to="body">
-    <modal-window v-if="showModal" @usersClick="(answer) => handleModalAnswer(answer)">
+    <modal-window v-if="showModal" @usersClick="handleModalAnswer">
       {{this.deleteRequest ? 'Удалить заметку?' : 'Отменить редактирование?'}}
     </modal-window>
   </teleport>
@@ -72,7 +72,6 @@ export default {
   methods: {
     getInputData(inputData) {
       this.editInputData = inputData;
-      this.showInputCount++;
       this.$store.commit("showEditInput", true);
     },
 

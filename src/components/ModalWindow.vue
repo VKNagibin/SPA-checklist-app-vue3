@@ -1,13 +1,13 @@
 <template>
   <div class="component-wrapper">
-  </div>
-  <div class="modal-window" @keydown.esc.capture="handleEsc">
-    <h2 class="question">
-      <slot></slot>
-    </h2>
-    <div class="button-group">
-      <button aria-label="Подтвердить" ref="yesBtn" class="yes" @click="(e) => handleClick(e)">Да</button>
-      <button aria-label="Отменить" class="no" @click="(e) => handleClick(e)">Нет</button>
+    <div class="modal-window" @keydown.esc.capture="handleEsc">
+      <h2 class="question">
+        <slot></slot>
+      </h2>
+      <div class="button-group">
+        <button aria-label="Подтвердить" ref="yesBtn" class="yes" @click="(e) => handleClick(e)">Да</button>
+        <button aria-label="Отменить" class="no" @click="(e) => handleClick(e)">Нет</button>
+      </div>
     </div>
   </div>
 </template>

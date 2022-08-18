@@ -59,8 +59,8 @@ export default {
 
     handleModalAnswer(answer) {
       if (this.deleteRequest && answer) {
-        let noteIndex = this.$store.state.notesArray.findIndex(item => item.noteId === this.id);
-        this.$store.commit("deleteNote", noteIndex);
+        let noteIndex = this.$store.getters.notesArray.findIndex(item => item.noteId === this.id);
+        this.$store.dispatch("deleteNote", noteIndex);
       }
       this.showModal = false;
     },
@@ -72,11 +72,11 @@ export default {
   },
 
   mounted() {
-    localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
+    localStorage.setItem("notesArray", JSON.stringify(this.$store.getters.notesArray));
   },
 
   beforeUpdate() {
-    localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
+    localStorage.setItem("notesArray", JSON.stringify(this.$store.getters.notesArray));
   }
 }
 

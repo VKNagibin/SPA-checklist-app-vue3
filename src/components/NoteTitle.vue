@@ -4,7 +4,7 @@
     <h2 class="todo-heading"
         @click="(e) => editHandler(e)"
         ref="heading">
-      {{this.$store.state.notesArray[noteIndex].heading}}
+      {{$store.getters.notesArray[noteIndex].heading}}
     </h2>
     <EditButton ariaLabel="изменить заголовок заметки" @edited="editHandler"/>
   </div>
@@ -26,7 +26,7 @@ export default {
 
   methods: {
     createTask() {
-      this.$store.commit("createNewTask", this.noteIndex)
+      this.$store.dispatch("createNewTask", this.noteIndex)
     },
 
     editHandler() {
@@ -47,7 +47,7 @@ export default {
   },
 
   beforeUpdate() {
-    localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
+    localStorage.setItem("notesArray", JSON.stringify(this.$store.getters.notesArray));
   },
 
 }

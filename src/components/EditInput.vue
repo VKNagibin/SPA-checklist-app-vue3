@@ -56,15 +56,15 @@ export default {
     },
     handleClick(e) {
       if (e.target.classList.contains("disable-all")) {
-        this.$store.commit("showEditInput", false);
+        this.$store.dispatch("showEditInput", false);
       }
     },
     closeModal() {
-      this.$store.commit("showEditInput", false);
+      this.$store.dispatch("showEditInput", false);
     },
     saveEditHandler() {
       if ( !(this.inputValue === "" || this.inputValue === this.value) ) {
-        this.$store.commit("editNote",
+        this.$store.dispatch("editNote",
             {
               noteIndex: this.noteIndex,
               taskId: this.taskId,
@@ -73,11 +73,11 @@ export default {
       }
 
       this.inputValue = "";
-      this.$store.commit("showEditInput", false);
+      this.$store.dispatch("showEditInput", false);
     },
     cancelEditHandler() {
       this.inputValue = "";
-      this.$store.commit("showEditInput", false);
+      this.$store.dispatch("showEditInput", false);
     }
   },
 
@@ -88,7 +88,7 @@ export default {
   },
 
   updated() {
-    localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
+    localStorage.setItem("notesArray", JSON.stringify(this.$store.getters.notesArray));
   },
 }
 </script>

@@ -7,19 +7,21 @@
     <transition-group class="todo-list"
                       name="list"
                       tag="ul">
-      <SingleTodo :id="todo.id"
-                  v-for="todo in this.$store.state.notesArray[noteIndex].tasks"
-                  :key="todo.id"
-                  :checked="todo.checked"
-                  :content="todo.content"
-                  :noteIndex="this.noteIndex"
-                  @edit="getInputData"/>
+      <SingleTodo
+          v-for="todo in $store.getters.notesArray[noteIndex].tasks"
+          :id="todo.id"
+          :key="todo.id"
+          :checked="todo.checked"
+          :content="todo.content"
+          :noteIndex="this.noteIndex"
+          @edit="getInputData"
+      />
       </transition-group>
     </div>
     <RemoveNoteButton @delete-note="deleteNote"/>
   </div>
   <teleport to="body">
-    <modal-window v-if="showModal" @usersClick="(answer) => handleModalAnswer(answer)">
+    <modal-window v-if="showModal" @usersClick="handleModalAnswer">
       {{this.deleteRequest ? 'Удалить заметку?' : 'Отменить редактирование?'}}
     </modal-window>
   </teleport>
@@ -72,8 +74,7 @@ export default {
   methods: {
     getInputData(inputData) {
       this.editInputData = inputData;
-      this.showInputCount++;
-      this.$store.commit("showEditInput", true);
+      this.$store.dispatch("showEditInput", true);
     },
 
     saveChanges() {
@@ -94,12 +95,12 @@ export default {
       if(this.deleteRequest && answer) {
         this.$router.push('/');
         setTimeout(() => {
-          this.$store.commit("deleteNote", this.noteIndex);
+          this.$store.dispatch("deleteNote", this.noteIndex);
         })
       }
 
       if(this.cancelEditRequest && answer) {
-        this.$store.commit("cancelEditRequest",  this.noteIndex);
+        this.$store.dispatch("cancelEditRequest",  this.noteIndex);
         this.$router.push('/');
       }
 
@@ -107,21 +108,21 @@ export default {
     },
 
     backwardHandler() {
-      this.$store.commit("removeNoteChanges", this.noteIndex);
+      this.$store.dispatch("removeNoteChanges", this.noteIndex);
     },
 
     handleBackward() {
-      this.$store.commit("repeatRemovedChanges", this.noteIndex);
+      this.$store.dispatch("repeatRemovedChanges", this.noteIndex);
     },
   },
 
   beforeMount() {
-    this.currentNote = this.$store.state.notesArray.find(item => this.$route.params.noteId === item.noteId);
-    this.noteIndex = this.$store.state.notesArray.findIndex(item => this.currentNote === item);
-    this.$store.commit("saveNoteState", this.noteIndex);
+    this.currentNote = this.$store.getters.notesArray.find(item => this.$route.params.noteId === item.noteId);
+    this.noteIndex = this.$store.getters.notesArray.findIndex(item => this.currentNote === item);
+    this.$store.dispatch("saveNoteState", this.noteIndex);
   },
   beforeUpdate() {
-    localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
+    localStorage.setItem("notesArray", JSON.stringify(this.$store.getters.notesArray));
   },
 }
 </script>

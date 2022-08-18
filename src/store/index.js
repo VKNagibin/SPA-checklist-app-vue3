@@ -1,25 +1,10 @@
 import { createStore } from "vuex";
 import { nanoid } from "nanoid";
-
-function getArrayCopy(array) {
-    return JSON.parse(JSON.stringify(array));
-}
-
-function noteChangesHandler(state, noteIndex) {
-    if (state.wasRevert) {
-        state.savedNoteState = getArrayCopy( state.savedNoteState.slice(0, ++state.curStateIndex) );
-        state.savedNoteState.push( getArrayCopy(state.notesArray[noteIndex]) );
-        state.wasRevert = false;
-    } else {
-        state.savedNoteState.push( getArrayCopy(state.notesArray[noteIndex]) );
-        state.curStateIndex++;
-    }
-}
+import { getArrayCopy, noteChangesHandler} from "@/store/helpers";
 
 const store = createStore({
     state () {
         return {
-            modalIsOpen: false,
             notesArray: [],
             showEditInput: false,
             savedNoteState: [],
@@ -28,7 +13,7 @@ const store = createStore({
         }
     },
     mutations: {
-        addNewNote(state) {
+        ADD_NEW_NOTE(state) {
             state.notesArray.push({
                 noteId: nanoid(),
                 heading: "Новая заметка",
@@ -39,24 +24,13 @@ const store = createStore({
                 }],
             });
         },
-        showEditInput(state, payload) {
-            state.showEditInput = payload;
-        },
-        deleteNote(state, noteIndex) {
+
+        DELETE_NOTE(state, noteIndex) {
             state.notesArray.splice(noteIndex, 1);
             localStorage.setItem("notesArray", state.notesArray);
         },
-        createNewTask(state, noteIndex) {
-                state.notesArray[noteIndex].tasks.push({
-                    content: "",
-                    id: nanoid(),
-                    checked: false,
-                });
 
-
-            noteChangesHandler(state, noteIndex)
-        },
-        editNote(state, {noteIndex, taskId, content}) {
+        EDIT_NOTE(state, {noteIndex, taskId, content}) {
             if (taskId) {
                 const taskIndex = state.notesArray[noteIndex].tasks.findIndex(item => item.id === taskId);
                 state.notesArray[noteIndex].tasks[taskIndex].content = content;
@@ -66,33 +40,53 @@ const store = createStore({
 
             noteChangesHandler(state, noteIndex)
         },
-        doneTask(state,{noteIndex, taskId, isChecked}) {
+
+        SET_NOTES_ARRAY(state, array) {
+            state.notesArray = array;
+        },
+
+        SET_SAVED_NOTE_STATE(state, noteIndex) {
+            const savedState = getArrayCopy(state.notesArray[noteIndex]);
+            state.savedNoteState.push(savedState);
+        },
+
+        REMOVE_NOTE_CHANGES(state, noteIndex) {
+            if (state.curStateIndex > 0) {
+                state.notesArray[noteIndex] = getArrayCopy(state.savedNoteState[--state.curStateIndex]);
+            }
+            state.wasRevert = true;
+        },
+
+        CREATE_NEW_TASK(state, noteIndex) {
+            state.notesArray[noteIndex].tasks.push({
+                content: "",
+                id: nanoid(),
+                checked: false,
+            });
+
+            noteChangesHandler(state, noteIndex)
+        },
+
+        DONE_TASK(state, {noteIndex, taskId, isChecked}) {
             const taskIndex = state.notesArray[noteIndex].tasks.findIndex(item => item.id === taskId);
             state.notesArray[noteIndex].tasks[taskIndex].checked = isChecked;
 
             noteChangesHandler(state, noteIndex)
         },
-        deleteTask(state, {noteIndex, taskId}) {
+
+        DELETE_TASK(state, {noteIndex, taskId}) {
             const taskIndex = state.notesArray[noteIndex].tasks.findIndex(item => item.id === taskId);
             state.notesArray[noteIndex].tasks.splice(taskIndex, 1);
 
             noteChangesHandler(state, noteIndex);
             localStorage.setItem("notesArray", state.notesArray);
         },
-        saveNoteState(state, noteIndex) {
-            const savedState = getArrayCopy(state.notesArray[noteIndex]);
-            state.savedNoteState.push(savedState);
-        },
-        cancelEditRequest(state, noteIndex) {
+
+        CANCEL_EDIT_REQUEST(state, noteIndex) {
             state.notesArray[noteIndex] = state.savedNoteState[0];
         },
-        removeNoteChanges(state, noteIndex) {
-            if (state.curStateIndex > 0) {
-                state.notesArray[noteIndex] = getArrayCopy(state.savedNoteState[--state.curStateIndex]);
-            }
-            state.wasRevert = true;
-        },
-        repeatRemovedChanges(state, noteIndex) {
+
+        REPEAT_REMOVED_CHANGES(state, noteIndex) {
             if (state.curStateIndex <= state.savedNoteState.length - 1) {
                 state.notesArray[noteIndex] = getArrayCopy(state.savedNoteState[++state.curStateIndex]);
             }
@@ -100,16 +94,64 @@ const store = createStore({
             (state.curStateIndex === state.savedNoteState.length - 1) &&
             (state.wasRevert = false);
         },
-        clearNoteState(state) {
-            state.savedNoteState = [];
-            state.curStateIndex = 0;
-            state.wasRevert = false;
 
+        SHOW_EDIT_INPUT(state, payload) {
+            state.showEditInput = payload;
         },
-        getNotesArray(state, array) {
-            state.notesArray = array;
-        }
     },
+
+    actions: {
+        addNewNote({ commit }) {
+            commit("ADD_NEW_NOTE");
+        },
+        deleteNote({ commit }, noteIndex) {
+            commit("DELETE_NOTE", noteIndex);
+        },
+        editNote({ commit }, {noteIndex, taskId, content}) {
+            commit("EDIT_NOTE", {noteIndex, taskId, content});
+        },
+        setNotesArray({ commit }, notesArray) {
+            commit("SET_NOTES_ARRAY", notesArray);
+        },
+        saveNoteState({ commit }, noteIndex) {
+            commit("SET_SAVED_NOTE_STATE", noteIndex);
+        },
+        removeNoteChanges({ commit }, noteIndex) {
+            commit("REMOVE_NOTE_CHANGES", noteIndex);
+        },
+        createNewTask({ commit }, noteIndex) {
+            commit("CREATE_NEW_TASK", noteIndex);
+        },
+        doneTask({ commit }, {noteIndex, taskId, isChecked}) {
+            commit("DONE_TASK", {noteIndex, taskId, isChecked});
+        },
+        deleteTask({ commit }, {noteIndex, taskId}) {
+            commit("DELETE_TASK", {noteIndex, taskId});
+        },
+        cancelEditRequest({ commit }, noteIndex) {
+            commit("CANCEL_EDIT_REQUEST", noteIndex);
+        },
+        repeatRemovedChanges({ commit }, noteIndex) {
+            commit("REPEAT_REMOVED_CHANGES", noteIndex);
+        },
+        showEditInput({ commit }, payload) {
+            commit("SHOW_EDIT_INPUT", payload);
+        },
+    },
+    getters: {
+        notesArray(state) {
+            return state.notesArray;
+        },
+        savedNoteState(state) {
+            return state.savedNoteState;
+        },
+        curStateIndex(state) {
+            return state.curStateIndex;
+        },
+        wasRevert(state) {
+            return state.wasRevert;
+        },
+    }
 });
 
 export default store;

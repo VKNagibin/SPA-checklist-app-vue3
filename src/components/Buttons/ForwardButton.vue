@@ -1,5 +1,5 @@
 <template>
-  <button v-show="this.$store.state.wasRevert"
+  <button v-show="this.$store.getters.wasRevert"
           title="Вернуть отмененное изменение"
           class="next-state-btn"
           aria-label="Вернуть отмененное изменение"

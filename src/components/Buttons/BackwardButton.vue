@@ -1,6 +1,6 @@
 <template>
   <button title="Отменить последнее изменение"
-          v-show="this.$store.state.savedNoteState.length > 1 && this.$store.state.curStateIndex"
+          v-show="$store.getters.savedNoteState.length > 1 && $store.getters.curStateIndex"
           class="prev-state-btn"
           aria-label="Отменить последнее изменение"
           @click="handleBackward">

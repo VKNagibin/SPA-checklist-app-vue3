@@ -4,7 +4,13 @@
       <BIconClipboard2Plus class='add-note-icon' />
     </button>
     <transition-group tag="div" name="list" class="notes-area">
-      <NoteCard v-for="note in this.$store.state.notesArray" :id="note.noteId" :key="note.noteId" :tasks="note.tasks" :heading="note.heading"/>
+      <NoteCard
+          v-for="note in $store.getters.notesArray"
+          :id="note.noteId"
+          :key="note.noteId"
+          :tasks="note.tasks"
+          :heading="note.heading"
+      />
     </transition-group>
   </div>
 </template>
@@ -20,11 +26,11 @@ export default {
   },
   methods: {
     addNoteHandler() {
-      this.$store.commit("addNewNote");
+      this.$store.dispatch("addNewNote");
     }
   },
   beforeUpdate() {
-    localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
+    localStorage.setItem("notesArray", JSON.stringify(this.$store.getters.notesArray));
   }
 }
 </script>

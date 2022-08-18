@@ -39,7 +39,7 @@ export default {
 
   methods: {
     handleCheckbox(e) {
-      this.$store.commit("doneTask",
+      this.$store.dispatch("doneTask",
           {
             noteIndex: this.noteIndex,
             taskId: this.id,
@@ -48,7 +48,7 @@ export default {
     },
 
     deleteTask(e, id) {
-      this.$store.commit("deleteTask", {
+      this.$store.dispatch("deleteTask", {
         noteIndex: this.noteIndex,
         taskId: id,
       });
@@ -71,7 +71,7 @@ export default {
     },
   },
   beforeUpdate() {
-    localStorage.setItem("notesArray", JSON.stringify(this.$store.state.notesArray));
+    localStorage.setItem("notesArray", JSON.stringify(this.$store.getters.notesArray));
   },
 }
 </script>

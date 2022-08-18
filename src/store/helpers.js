@@ -12,3 +12,7 @@ export function noteChangesHandler(state, noteIndex) {
         state.curStateIndex++;
     }
 }
+
+export function arrayLastElementIndex(array) {
+    return array.length - 1;
+}

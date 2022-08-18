@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 import { nanoid } from "nanoid";
-import { getArrayCopy, noteChangesHandler} from "@/store/helpers";
+import {getArrayCopy, arrayLastElementIndex, noteChangesHandler} from "@/store/helpers";
 
 const store = createStore({
     state () {
@@ -87,12 +87,20 @@ const store = createStore({
         },
 
         REPEAT_REMOVED_CHANGES(state, noteIndex) {
-            if (state.curStateIndex <= state.savedNoteState.length - 1) {
-                state.notesArray[noteIndex] = getArrayCopy(state.savedNoteState[++state.curStateIndex]);
+            const lastElementIndex = arrayLastElementIndex(state.savedNoteState);
+
+            if (state.curStateIndex <= lastElementIndex) {
+                state.notesArray[noteIndex] =
+                    getArrayCopy(state.savedNoteState[++state.curStateIndex]);
             }
 
-            (state.curStateIndex === state.savedNoteState.length - 1) &&
-            (state.wasRevert = false);
+            if (state.curStateIndex === lastElementIndex) state.wasRevert = false;
+        },
+
+        CLEAR_SAVED_NOTE_STATE(state) {
+            state.savedNoteState = [];
+            state.curStateIndex = 0;
+            state.wasRevert = false;
         },
 
         SHOW_EDIT_INPUT(state, payload) {
@@ -136,6 +144,9 @@ const store = createStore({
         },
         showEditInput({ commit }, payload) {
             commit("SHOW_EDIT_INPUT", payload);
+        },
+        clearSavedNoteState({ commit }) {
+            commit("CLEAR_SAVED_NOTE_STATE");
         },
     },
     getters: {

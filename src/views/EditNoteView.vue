@@ -124,6 +124,10 @@ export default {
   beforeUpdate() {
     localStorage.setItem("notesArray", JSON.stringify(this.$store.getters.notesArray));
   },
+
+  beforeUnmount() {
+    this.$store.dispatch("clearSavedNoteState");
+  }
 }
 </script>
 

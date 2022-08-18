@@ -2,8 +2,8 @@
   <li class="todo-list__item">
     <input type="checkbox"
            class="todo-list__checkbox"
-           @change="(e) => handleCheckbox(e)"
-           :checked="checked"
+           v-model="isChecked"
+           @change="handleCheckbox"
            aria-label="отметить как выполненное">
     <span class="todo-list__span"
           ref="span"
@@ -37,13 +37,19 @@ export default {
     noteIndex: Number,
   },
 
+  data() {
+    return {
+      isChecked: this.$props.checked,
+    }
+  },
+
   methods: {
-    handleCheckbox(e) {
+    handleCheckbox() {
       this.$store.dispatch("doneTask",
           {
             noteIndex: this.noteIndex,
             taskId: this.id,
-            isChecked: e.currentTarget.checked,
+            isChecked: this.isChecked,
           });
     },
 

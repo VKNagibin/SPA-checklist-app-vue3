@@ -162,6 +162,9 @@ const store = createStore({
         wasRevert(state) {
             return state.wasRevert;
         },
+        showForwardButton(state) {
+            return state.savedNoteState.length > 1 && state.curStateIndex;
+        },
     }
 });
 
